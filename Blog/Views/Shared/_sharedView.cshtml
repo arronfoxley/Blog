@@ -17,31 +17,16 @@
             <a class="navbar-brand" href="#">NetConstruct Blog</a>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle shadow-none" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Blogs
+                    Posts
                 </button>
                 <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
-                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=1 })">Blog 1</a>
-                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=2 })">Blog 2</a>
-                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=3 })">Blog 3</a>
+                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=1 })">Post 1</a>
+                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=2 })">Post 2</a>
+                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=3 })">Post 3</a>
                 </div>
             </div>
         </div>
     </nav>
-
-    <!--
-    <div class="btn-group shadow-0">
-        <button type="button" class="btn btn-link dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
-            Action
-        </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Separated link</a></li>
-        </ul>
-    </div>-->
-
     <div class="container">
         @RenderBody()
         <div class="row">

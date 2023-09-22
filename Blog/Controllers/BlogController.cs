@@ -19,10 +19,11 @@ namespace Blog.Controllers
         protected static readonly string jsonPath = HostingEnvironment.MapPath(@"~/App_Data/Blog-Posts.json");
         public BlogController() {
 
+            //Deserialzse to list
             _blogPosts = JsonConvert.DeserializeObject<BlogPosts>(System.IO.File.ReadAllText(jsonPath));
 
             //Check and convert dates
-            _blogPosts.Posts.ForEach(blogPost => blogPost.comments.Where(comment =>comment.date.Count() > 19).ToList().ForEach(comment => comment.date = DateTime.Parse(comment.date).ToString()));
+            _blogPosts.Posts.ForEach(blogPost => blogPost.comments.Where(comment =>comment.date.Length > 19).ToList().ForEach(comment => comment.date = DateTime.Parse(comment.date).ToString()));
 
             //Sort comments by date
            _blogPosts.Posts.ForEach(blogPost => blogPost.comments.Sort((x, y) => y.date.CompareTo(x.date)));
