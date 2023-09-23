@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Blog/App_Data/Blog-Posts.json
+/Blog/Views/Shared/_sharedView.cshtml
