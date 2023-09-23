@@ -1,0 +1,161 @@
+﻿@using System.Web.Mvc.Html
+@using Models.Blog
+@model Models.Blog.BlogPost
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="~/Assets/CSS/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Assets/CSS/custom.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">NetConstruct Blog</a>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle shadow-none" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Posts
+                </button>
+                <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=1 })">Post 1</a>
+                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=2 })">Post 2</a>
+                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=3 })">Post 3</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        @RenderBody()
+        <div class="row">
+
+            <!-- Blog post content -->
+            <div id="comments" class="col-lg-12">
+
+                <!-- Title -->
+                <h1 class="mt-4">@Model.title</h1>
+
+                <hr>
+
+                <!-- Date/Time -->
+                <p>@Model.date</p>
+
+                <hr>
+
+                <!-- Preview Image -->
+                <img class="img-fluid rounded" src="@Model.image" alt="@Model.title">
+
+                <hr>
+
+                <!-- Post Content -->
+                @Html.Raw(Model.htmlContent)
+                <hr>
+
+                <div id="commentFormContainer" class="card my-4">
+                    <h5 class="card-header">Leave a Comment:</h5>
+                    <div class="card-body">
+                        <!-- Blog post comment form -->
+                        @using (Ajax.BeginForm("SubmitComment", "Blog", new AjaxOptions { HttpMethod = "POST", OnSuccess = string.Format("CommentSuccess(data,'{0}')", "collapse" + (Model.comments.Count)) }, new { id = "commentForm" }))
+                        {
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="Name">Name</label>
+                                    <input name="name" type="text" class="form-control" id="name" placeholder="Name" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="EmailAddress">Email Address</label>
+                                    <input name="emailAddress" type="email" class="form-control" id="emailAddress" placeholder="Email Address" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Message">Message</label>
+                                <textarea name="message" id="message" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <input type="hidden" id="blogPostId" name="blogPostId" value="@Model.id">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Blog post comments -->
+                @if (Model.comments != null)
+                {
+                    <!--For each comment-->
+                    for (int i = 0; i < Model.comments.Count; i++)
+                    {
+
+                        Comment comment = Model.comments[i];
+                        string collapse = "collapse" + i;
+
+                        <div class="media mb-4">
+                            <img class="d-flex mr-3 rounded-circle user-avatar" src="https://eu.ui-avatars.com/api/?name=@comment.name" alt="@comment.name">
+                            <div id="comment-@comment.guid" class="media-body">
+                                <h5 class="mt-0">@comment.name<small><em>@comment.date</em></small></h5>
+                                @comment.message
+                                <br />
+                                @foreach (CommentReply commentReply in comment.commentReplies)
+                                {
+
+                                    <div class="media pt-4">
+                                        <img class="d-flex mr-3 rounded-circle user-avatar" src="https://eu.ui-avatars.com/api/?name=@commentReply.name" alt="@commentReply.name">
+                                        <div class="media-body">
+                                            <h5 class="mt-0">@commentReply.name<small><em>@commentReply.date</em></small></h5>
+                                            @commentReply.message
+                                        </div>
+                                    </div>
+
+                                }
+
+                                <a class="formLink" data-toggle="collapse" href="#@collapse" aria-expanded="false" aria-controls="@collapse">
+                                    Reply
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="collapse" id="@collapse">
+                            <div class="card my-4">
+                                <h5 class="card-header">Reply to comment:</h5>
+                                <div class="card-body">
+                                    <!--Reply form -->
+                                    @using (Ajax.BeginForm("ReplyToComment", "Blog", new AjaxOptions { HttpMethod = "POST", OnSuccess = string.Format("ReplySuccess(data,'{0}')", @i) }, new { id = "replyForm" + @i }))
+                                    {
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="Name">Name</label>
+                                                <input name="name" type="text" class="form-control" id="name" placeholder="Name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Message">Message</label>
+                                            <textarea name="message" id="message" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                        <input type="hidden" id="blogPostId" name="blogPostId" value="@Model.id">
+                                        <input type="hidden" id="commentGuid" name="commentGuid" value="@comment.guid">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Assets/Lib/jquery-3.3.1.min.js"></script>
+    <script src="~/Assets/Lib/jquery.validate.min.js"></script>
+    <script src="~/Assets/Lib/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Assets/Lib/unobtrusive-bootstrap.js"></script>
+    <script src="~/Assets/Lib/bootstrap.bundle.min.js"></script>
+    <script src="~/Assets/Lib/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/Assets/Lib/custom.js"></script>
+
+</body>
+</html>
+
