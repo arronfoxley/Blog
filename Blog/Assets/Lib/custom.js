@@ -80,6 +80,9 @@ function CommentSuccess(data, targetElementId) {
 
     ResetForm("commentForm");
     CreateMessageConfirmation("Comment successfully submitted", "#commentFormContainer");
+    var form = createReplyForm();
+
+    console.log(form);
 
 }
 
@@ -127,23 +130,26 @@ function CreateMessageConfirmation(alertMessage, targetElementId) {
 
 }
 
-//Toggle reply\comment box link text 
+//On link click handler
 $('a').on("click", function () {
-
-
-    console.log($(this).text());
 
     if ($(this).hasClass("formLink")){
 
+        //Toggle reply\comment box link text 
         if ($(this).text() == "Close Reply") {
 
-            $(this).text("Reply");
+            $(this).text("Reply");          
 
         } else {
 
             $(this).text("Close Reply");
 
         }
+
+        //Scroll link and box into view
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $(this).offset().top - ($(".navbar").height() + $(this).height())
+        }, 1000);
 
     }
 
