@@ -115,7 +115,8 @@ namespace Blog.Controllers
             comment.commentReplies.Add(reply);
 
             string jsonString = JsonConvert.SerializeObject(_blogModel.BlogPosts);
-            System.IO.File.WriteAllText(jsonPath, jsonString);
+
+            SaveToFile(jsonString);
 
             return Json(new { comment, reply });
 
@@ -128,6 +129,14 @@ namespace Blog.Controllers
             blogPost.comments.Add(comment);
 
             string jsonString = JsonConvert.SerializeObject(_blogModel.BlogPosts);
+
+            SaveToFile(jsonString);
+
+        }
+
+        private void SaveToFile(string jsonString)
+        {
+
             System.IO.File.WriteAllText(jsonPath, jsonString);
 
         }
