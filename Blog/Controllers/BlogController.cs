@@ -106,11 +106,11 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public ActionResult ReplyToComment(string name, string message, int blogPostId, Guid commentGuid)
+        public ActionResult ReplyToComment(string name, string emailAddress, string message, int blogPostId, Guid commentGuid)
         {
 
             Comment comment = GetBlogPostCommentByGUID(blogPostId, commentGuid);
-            CommentReply reply = new CommentReply() { date = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), message = message, name = name };
+            CommentReply reply = new CommentReply() { date = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), emailAddress = emailAddress, message = message, name = name };
 
             comment.commentReplies.Add(reply);
 

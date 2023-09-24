@@ -114,6 +114,7 @@
     <Compile Include="Models\Blog\BlogPosts.cs" />
     <Compile Include="Models\Blog\Comment.cs" />
     <Compile Include="Models\Blog\CommentReply.cs" />
+    <Compile Include="Models\Blog\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
