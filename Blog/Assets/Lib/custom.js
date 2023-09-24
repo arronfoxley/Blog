@@ -72,6 +72,7 @@ function CommentSuccess(data, form) {
 
     var br = document.createElement("br");
 
+    /* Not sure if needed, adds reply to new comment
     //var lastCollapseId = $('.collapse').last().attr('id');
     //var lastId = parseInt(lastCollapseId.replace("collapse", ""));
     //var nextId = lastId + 1;
@@ -84,7 +85,7 @@ function CommentSuccess(data, form) {
 
     //var replyForm = CreateReplyForm("collapse" + nextId, parent, data['comment'].guid, data['blogPostId']);
 
-    //$(replyForm).insertAfter($(a))
+    //$(replyForm).insertAfter($(a))*/
 
     $(parent).insertAfter($('#commentFormContainer'));
 
@@ -201,7 +202,7 @@ function CreateH5(classString) {
     return h5;
 
 }
-function CreateReplyForm(collapseId, commentHolder, commentGuid, blogPostId) {
+/*function CreateReplyForm(collapseId, commentHolder, commentGuid, blogPostId) {
 
 var formAsString = '<div class="collapse" id="' + collapseId +'">'+
 '<div class="card my-4">'+
@@ -232,7 +233,7 @@ var formAsString = '<div class="collapse" id="' + collapseId +'">'+
 
     return $($.parseHTML(formAsString));
 
-}
+}*/
 function CreateLink(classString, dataToggle, href, ariaExpanded, ariaControls) {
 
     var a = document.createElement("a");
