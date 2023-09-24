@@ -109,6 +109,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Blog\BlogModel.cs" />
     <Compile Include="Models\Blog\BlogPost.cs" />
     <Compile Include="Models\Blog\BlogPosts.cs" />
     <Compile Include="Models\Blog\Comment.cs" />

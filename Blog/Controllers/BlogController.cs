@@ -1,32 +1,30 @@
 ﻿using Models.Blog;
 using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Web.Hosting;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 
 namespace Blog.Controllers
 {
     public class BlogController : Controller
     {
 
-        protected BlogPosts _blogPosts;
+        protected BlogModel _blogModel;
 
         protected static readonly string jsonPath = HostingEnvironment.MapPath(@"~/App_Data/Blog-Posts.json");
         public BlogController() {
 
+            _blogModel = new BlogModel();
+
             //Deserialzse to list
-            _blogPosts = JsonConvert.DeserializeObject<BlogPosts>(System.IO.File.ReadAllText(jsonPath));
+            _blogModel.BlogPosts = JsonConvert.DeserializeObject<BlogPosts>(System.IO.File.ReadAllText(jsonPath));
 
             //Check and convert dates
-            _blogPosts.Posts.ForEach(blogPost => blogPost.comments.Where(comment =>comment.date.Length > 19).ToList().ForEach(comment => comment.date = DateTime.Parse(comment.date).ToString()));
+            _blogModel.BlogPosts.Posts.ForEach(blogPost => blogPost.comments.Where(comment =>comment.date.Length > 19).ToList().ForEach(comment => comment.date = DateTime.Parse(comment.date).ToString()));
 
             //Sort comments by date
-           _blogPosts.Posts.ForEach(blogPost => blogPost.comments.Sort((x, y) => y.date.CompareTo(x.date)));
+            _blogModel.BlogPosts.Posts.ForEach(blogPost => blogPost.comments.Sort((x, y) => y.date.CompareTo(x.date)));
 
 
         }
@@ -35,31 +33,33 @@ namespace Blog.Controllers
         public ActionResult Index()
         {
 
-            return View(GetBlogPostById(1));
+            _blogModel.SelectedBlogPost = _blogModel.BlogPosts.Posts[0];
+            return View(_blogModel);
 
         }
 
-        [Route("Blog/BlogPost/{id}")]
+        [Route("Blog/BlogPosts/{id}")]
         public ActionResult BlogPost(int id)
         {
-
-            return View(GetBlogPostById(id));
-
+            _blogModel.SelectedBlogPost = _blogModel.BlogPosts.Posts[id];
+            return View(_blogModel);
         }
 
-        [Route("Blog/BlogPost/{id}/CommentSubmitted")]
+        [Route("Blog/BlogPosts/{id}/CommentSubmitted")]
         public ActionResult CommentSubmitted(int id)
         {
 
-            return View(GetBlogPostById(id));
+            _blogModel.SelectedBlogPost = _blogModel.BlogPosts.Posts[id];
+            return View(_blogModel);
 
         }
 
-        [Route("Blog/BlogPost/{id}/ReplySubmitted")]
+        [Route("Blog/BlogPosts/{id}/ReplySubmitted")]
         public ActionResult ReplySubmitted(int id)
         {
 
-            return View(GetBlogPostById(id));
+            _blogModel.SelectedBlogPost = _blogModel.BlogPosts.Posts[id];
+            return View(_blogModel);
 
         }
 
@@ -114,7 +114,7 @@ namespace Blog.Controllers
 
             comment.commentReplies.Add(reply);
 
-            string jsonString = JsonConvert.SerializeObject(_blogPosts);
+            string jsonString = JsonConvert.SerializeObject(_blogModel.BlogPosts);
             System.IO.File.WriteAllText(jsonPath, jsonString);
 
             return Json(new { comment, reply });
@@ -127,7 +127,7 @@ namespace Blog.Controllers
             BlogPost blogPost = GetBlogPostById(blogPostId);
             blogPost.comments.Add(comment);
 
-            string jsonString = JsonConvert.SerializeObject(_blogPosts);
+            string jsonString = JsonConvert.SerializeObject(_blogModel.BlogPosts);
             System.IO.File.WriteAllText(jsonPath, jsonString);
 
         }
@@ -135,7 +135,7 @@ namespace Blog.Controllers
         private BlogPost GetBlogPostById(int id)
         {
 
-            return _blogPosts.Posts.First<BlogPost>(blogPost => blogPost.id == id);
+            return _blogModel.BlogPosts.Posts.First<BlogPost>(blogPost => blogPost.id == id);
 
         }
 

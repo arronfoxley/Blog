@@ -1,6 +1,6 @@
 ﻿@using System.Web.Mvc.Html
 @using Models.Blog
-@model Models.Blog.BlogPost
+@model Models.Blog.BlogModel
 
 <!DOCTYPE html>
 <html>
@@ -20,9 +20,12 @@
                     Posts
                 </button>
                 <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
-                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=1 })">Post 1</a>
-                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=2 })">Post 2</a>
-                    <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=3 })">Post 3</a>
+
+                    @foreach (BlogPost blogPost in Model.BlogPosts.Posts)
+                    {
+                        <a class="nav-link" href="@Url.Action("BlogPost", "Blog", new { id=blogPost.id -1 })">Post @blogPost.id</a>
+                    }
+
                 </div>
             </div>
         </div>
@@ -35,29 +38,29 @@
             <div id="comments" class="col-lg-12">
 
                 <!-- Title -->
-                <h1 class="mt-4">@Model.title</h1>
+                <h1 class="mt-4">@Model.SelectedBlogPost.title</h1>
 
                 <hr>
 
                 <!-- Date/Time -->
-                <p>@Model.date</p>
+                <p>@Model.SelectedBlogPost.date</p>
 
                 <hr>
 
                 <!-- Preview Image -->
-                <img class="img-fluid rounded" src="@Model.image" alt="@Model.title">
+                <img class="img-fluid rounded" src="@Model.SelectedBlogPost.image" alt="@Model.SelectedBlogPost.title">
 
                 <hr>
 
                 <!-- Post Content -->
-                @Html.Raw(Model.htmlContent)
+                @Html.Raw(Model.SelectedBlogPost.htmlContent)
                 <hr>
 
                 <div id="commentFormContainer" class="card my-4">
                     <h5 class="card-header">Leave a Comment:</h5>
                     <div class="card-body">
                         <!-- Blog post comment form -->
-                        @using (Ajax.BeginForm("SubmitComment", "Blog", new AjaxOptions { HttpMethod = "POST", OnSuccess = string.Format("CommentSuccess(data,'{0}')", "collapse" + (Model.comments.Count)) }, new { id = "commentForm" }))
+                        @using (Ajax.BeginForm("SubmitComment", "Blog", new AjaxOptions { HttpMethod = "POST", OnSuccess = string.Format("CommentSuccess(data,'{0}')", "collapse" + (Model.SelectedBlogPost.comments.Count)) }, new { id = "commentForm" }))
                         {
                             <div class="form-row">
                                 <div class="form-group col-md-6">
@@ -73,20 +76,20 @@
                                 <label for="Message">Message</label>
                                 <textarea name="message" id="message" class="form-control" rows="3" required></textarea>
                             </div>
-                            <input type="hidden" id="blogPostId" name="blogPostId" value="@Model.id">
+                            <input type="hidden" id="blogPostId" name="blogPostId" value="@Model.SelectedBlogPost.id">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         }
                     </div>
                 </div>
 
                 <!-- Blog post comments -->
-                @if (Model.comments != null)
+                @if (Model.SelectedBlogPost.comments != null)
                 {
                     <!--For each comment-->
-                    for (int i = 0; i < Model.comments.Count; i++)
+                    for (int i = 0; i < Model.SelectedBlogPost.comments.Count; i++)
                     {
 
-                        Comment comment = Model.comments[i];
+                        Comment comment = Model.SelectedBlogPost.comments[i];
                         string collapse = "collapse" + i;
 
                         <div class="media mb-4">
@@ -132,7 +135,7 @@
                                             <label for="Message">Message</label>
                                             <textarea name="message" id="message" class="form-control" rows="3" required></textarea>
                                         </div>
-                                        <input type="hidden" id="blogPostId" name="blogPostId" value="@Model.id">
+                                        <input type="hidden" id="blogPostId" name="blogPostId" value="@Model.SelectedBlogPost.id">
                                         <input type="hidden" id="commentGuid" name="commentGuid" value="@comment.guid">
                                         <button type="submit" class="btn btn-primary">Submit</button>
 
