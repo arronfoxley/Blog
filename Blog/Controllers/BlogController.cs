@@ -101,7 +101,7 @@ namespace Blog.Controllers
             Comment comment = new Comment() { guid = Guid.NewGuid(), date = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), emailAddress = emailAddress, message = message, name = name };
             SaveComment(blogPostId, comment);
 
-            return Json(new { comment });
+            return Json(new { comment, blogPostId });
 
         }
 

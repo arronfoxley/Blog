@@ -1,11 +1,13 @@
 ﻿//On successful reply submission, create a new reply element and append it to the target element
-function ReplySuccess(data, formId) {
+function ReplySuccess(data, form) {
 
     var nameText = document.createTextNode(data['reply'].name);
     var dateText = document.createTextNode(data['reply'].date);
     var messageText = document.createTextNode(data['reply'].message);
 
     var parent = CreateDiv("media pt-4");
+
+    var formId = form.id;
 
     var img = CreateImg("d-flex mr-3 rounded-circle user-avatar", "https://eu.ui-avatars.com/api/?name=" + data['reply'].name, data['reply'].name);
     parent.appendChild(img);
@@ -34,12 +36,12 @@ function ReplySuccess(data, formId) {
 
     $(parent).insertBefore(target.lastElementChild);
 
-    ResetForm("replyForm" + formId);
-    CreateMessageConfirmation("Reply successfully submitted", "#collapse" + formId);
-}
+    ResetForm(form);
 
+    CreateMessageConfirmation("Reply successfully submitted", '#'+formId);
+}
 //On successful comment submission, create a new comment element and append it to the target element
-function CommentSuccess(data, targetElementId) {
+function CommentSuccess(data, form) {
 
     var messageText = document.createTextNode(data['comment'].message);
     var nameText = document.createTextNode(data['comment'].name);
@@ -70,41 +72,32 @@ function CommentSuccess(data, targetElementId) {
 
     var br = document.createElement("br");
 
-    var a = CreateLink(targetElementId, "#" + targetElementId, "false", targetElementId);
-    a.appendChild(linkText);
+    //var lastCollapseId = $('.collapse').last().attr('id');
+    //var lastId = parseInt(lastCollapseId.replace("collapse", ""));
+    //var nextId = lastId + 1;
 
-    content.appendChild(br);
-    content.appendChild(a);
+    //var a = CreateLink("formLink", "collapse","#collapse" + nextId, "false", "collapse" + nextId);
+    //a.appendChild(linkText);
 
-    $(parent).insertAfter("#commentFormContainer")
+    //content.appendChild(br);
+    //content.appendChild(a);
 
-    ResetForm("commentForm");
+    //var replyForm = CreateReplyForm("collapse" + nextId, parent, data['comment'].guid, data['blogPostId']);
+
+    //$(replyForm).insertAfter($(a))
+
+    $(parent).insertAfter($('#commentFormContainer'));
+
+    ResetForm(form);
     CreateMessageConfirmation("Comment successfully submitted", "#commentFormContainer");
-    var form = createReplyForm();
-
-    console.log(form);
 
 }
-
-function CreateLink(dataToggle, href, ariaExpanded, ariaControls) {
-
-    var a = document.createElement("a");
-    a.setAttribute("data-toggle", dataToggle);
-    a.setAttribute("href", href);
-    a.setAttribute("aria-expanded", ariaExpanded)
-    a.setAttribute("aria-controls", ariaControls);
-
-    return a;
-
-}
-
 //Reset the forms
-function ResetForm(formId) {
+function ResetForm(form) {
 
-    document.getElementById(formId).reset();
+    form.reset();
     
 }
-
 //Create Alert elements, pass alert message and target element Id
 function CreateMessageConfirmation(alertMessage, targetElementId) {
 
@@ -129,11 +122,37 @@ function CreateMessageConfirmation(alertMessage, targetElementId) {
         2000);
 
 }
+//Form submit override
+$(".form").submit(function (e) {
 
+    e.preventDefault();
+
+    var actionUrl = $(this).attr('action');
+
+    $.ajax({
+        type: "POST",
+        url: actionUrl,
+        data: $(this).serialize(),
+        success: function (data) {
+
+            if (e.target.id == "commentForm") {
+
+                CommentSuccess(data, e.target);
+
+            } else {
+
+                ReplySuccess(data, e.target);
+
+            }
+
+        }
+    });
+
+});
 //On link click handler
 $('a').on("click", function () {
 
-    if ($(this).hasClass("formLink")){
+    if ($(this).hasClass("formLink")) {
 
         //Toggle reply\comment box link text 
         if ($(this).text() == "Close Reply") {
@@ -154,7 +173,6 @@ $('a').on("click", function () {
     }
 
 });
-
 //Create elements
 function CreateImg(classString, src, alt) {
 
@@ -166,7 +184,6 @@ function CreateImg(classString, src, alt) {
     return img;
 
 }
-
 function CreateDiv(classString, id) {
 
     var div = document.createElement("div");
@@ -176,12 +193,55 @@ function CreateDiv(classString, id) {
     return div;
 
 }
-
 function CreateH5(classString) {
 
     var h5 = document.createElement("h5");
     h5.setAttribute("class", classString);
 
     return h5;
+
+}
+function CreateReplyForm(collapseId, commentHolder, commentGuid, blogPostId) {
+
+var formAsString = '<div class="collapse" id="' + collapseId +'">'+
+'<div class="card my-4">'+
+'<h5 class="card-header">Reply to comment:</h5>'+
+'<div class="card-body">'+
+'<form id="@collapse" class="form" method="post" action="/Blog/ReplyToComment">'+
+'<div class="form-row">'+
+'<div class="form-group col-md-6'+
+'<label for="Name">Name</label>'+
+'<input name="name" type="text" class="form-control" id="name" placeholder="Name" required>'+
+'</div>'+
+'</div>'+
+'<div class="form-group col-md-6">'+
+'<label for="EmailAddress">Email Address</label>'+
+'<input name="emailAddress" type="email" class="form-control" id="emailAddress" placeholder="Email Address" required>'+
+'</div>'+
+'<div class="form-group">'+
+'<label for="Message">Message</label>'+
+'<textarea name="message" id="message" class="form-control" rows="3" required></textarea>'+
+'</div>'+
+'<input type="hidden" id="blogPostId" name="blogPostId" value="' + blogPostId + '">' +
+'<input type="hidden" id="commentGuid" name="commentGuid" value="' + commentGuid + '">' +
+'<button type="submit" class="btn btn-primary">Submit</button>'+
+'</form>'+
+'</div>'+
+'</div>'+
+'</div>'
+
+    return $($.parseHTML(formAsString));
+
+}
+function CreateLink(classString, dataToggle, href, ariaExpanded, ariaControls) {
+
+    var a = document.createElement("a");
+    a.setAttribute("class", classString);
+    a.setAttribute("data-toggle", dataToggle);
+    a.setAttribute("href", href);
+    a.setAttribute("aria-expanded", ariaExpanded)
+    a.setAttribute("aria-controls", ariaControls);
+
+    return a;
 
 }
