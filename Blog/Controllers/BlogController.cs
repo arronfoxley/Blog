@@ -24,7 +24,7 @@ namespace Blog.Controllers
             _blogModel.BlogPosts.Posts.ForEach(blogPost => blogPost.comments.Where(comment =>comment.date.Length > 19).ToList().ForEach(comment => comment.date = DateTime.Parse(comment.date).ToString()));
 
             //Sort comments by date
-            _blogModel.BlogPosts.Posts.ForEach(blogPost => blogPost.comments.Sort((x, y) => y.date.CompareTo(x.date)));
+            _blogModel.BlogPosts.Posts.ForEach(blogPost => blogPost.comments.Sort((x, y) => x.date.CompareTo(y.date)));
 
 
         }
