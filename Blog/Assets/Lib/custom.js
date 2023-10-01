@@ -72,20 +72,19 @@ function CommentSuccess(data, form) {
 
     var br = document.createElement("br");
 
-    /* Not sure if needed, adds reply to new comment
-    //var lastCollapseId = $('.collapse').last().attr('id');
-    //var lastId = parseInt(lastCollapseId.replace("collapse", ""));
-    //var nextId = lastId + 1;
+    var lastCollapseId = $('.collapse').last().attr('id');
+    var lastId = parseInt(lastCollapseId.replace("collapse", ""));
+    var nextId = lastId + 1;
 
-    //var a = CreateLink("formLink", "collapse","#collapse" + nextId, "false", "collapse" + nextId);
-    //a.appendChild(linkText);
+    var a = CreateLink("formLink", "collapse","#collapse" + nextId, "false", "collapse" + nextId);
+    a.appendChild(linkText);
 
-    //content.appendChild(br);
-    //content.appendChild(a);
+    content.appendChild(br);
+    content.appendChild(a);
 
-    //var replyForm = CreateReplyForm("collapse" + nextId, parent, data['comment'].guid, data['blogPostId']);
+    var replyForm = CreateReplyForm("collapse" + nextId, parent, data['comment'].guid, data['blogPostId']);
 
-    //$(replyForm).insertAfter($(a))*/
+    $(replyForm).insertAfter($(a))
 
     $(parent).insertAfter($('#commentFormContainer'));
 
@@ -150,8 +149,10 @@ $(".form").submit(function (e) {
     });
 
 });
-//On link click handler
-$('a').on("click", function () {
+//On link click handler, bind to doucment and selector to catch for dynamically generated links
+$(document).on("click", 'a', function () {
+
+    console.log("test");
 
     if ($(this).hasClass("formLink")) {
 
@@ -202,7 +203,9 @@ function CreateH5(classString) {
     return h5;
 
 }
-/*function CreateReplyForm(collapseId, commentHolder, commentGuid, blogPostId) {
+
+//Create form from string
+function CreateReplyForm(collapseId, commentHolder, commentGuid, blogPostId) {
 
 var formAsString = '<div class="collapse" id="' + collapseId +'">'+
 '<div class="card my-4">'+
@@ -233,7 +236,7 @@ var formAsString = '<div class="collapse" id="' + collapseId +'">'+
 
     return $($.parseHTML(formAsString));
 
-}*/
+}
 function CreateLink(classString, dataToggle, href, ariaExpanded, ariaControls) {
 
     var a = document.createElement("a");
