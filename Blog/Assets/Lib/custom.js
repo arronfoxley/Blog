@@ -122,8 +122,10 @@ function CreateMessageConfirmation(alertMessage, targetElementId) {
         2000);
 
 }
-//Form submit override
-$(".form").submit(function (e) {
+//Form submit override, delegate to document for dynamically created forms and use selector
+$(document).on('submit','.form', function (e) {
+
+    console.log(e)
 
     e.preventDefault();
 
@@ -207,34 +209,35 @@ function CreateH5(classString) {
 //Create form from string
 function CreateReplyForm(collapseId, commentHolder, commentGuid, blogPostId) {
 
-var formAsString = '<div class="collapse" id="' + collapseId +'">'+
-'<div class="card my-4">'+
-'<h5 class="card-header">Reply to comment:</h5>'+
-'<div class="card-body">'+
-'<form id="@collapse" class="form" method="post" action="/Blog/ReplyToComment">'+
-'<div class="form-row">'+
-'<div class="form-group col-md-6'+
-'<label for="Name">Name</label>'+
-'<input name="name" type="text" class="form-control" id="name" placeholder="Name" required>'+
-'</div>'+
-'</div>'+
-'<div class="form-group col-md-6">'+
-'<label for="EmailAddress">Email Address</label>'+
-'<input name="emailAddress" type="email" class="form-control" id="emailAddress" placeholder="Email Address" required>'+
-'</div>'+
-'<div class="form-group">'+
-'<label for="Message">Message</label>'+
-'<textarea name="message" id="message" class="form-control" rows="3" required></textarea>'+
-'</div>'+
-'<input type="hidden" id="blogPostId" name="blogPostId" value="' + blogPostId + '">' +
-'<input type="hidden" id="commentGuid" name="commentGuid" value="' + commentGuid + '">' +
-'<button type="submit" class="btn btn-primary">Submit</button>'+
-'</form>'+
-'</div>'+
-'</div>'+
-'</div>'
+    var htmlString = '<div class="collapse" id="' + collapseId + '">' +
+        '<div class="card my-4">' +
+        '<h5 class="card-header">Reply to comment:</h5>' +
+        '<div class="card-body">' +
+        '<!--Reply form -->' +
+        '<form id="' + collapseId + '" class="form" method="post" action="/Blog/ReplyToComment">' +
+        '<div class="form-row">' +
+        '<div class="form-group col-md-6">' +
+        '<label for="Name">Name</label>' +
+        '<input name="name" type="text" class="form-control" id="name" placeholder="Name" required>' +
+        '</div>' +
+        '<div class="form-group col-md-6">' +
+        '<label for="EmailAddress">Email Address</label>' +
+        '<input name="emailAddress" type="email" class="form-control" id="emailAddress" placeholder="Email Address" required>' +
+        '</div>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="Message">Message</label>' +
+        '<textarea name="message" id="message" class="form-control" rows="3" required></textarea>' +
+        '</div>' +
+        '<input type="hidden" id="blogPostId" name="blogPostId" value="' + blogPostId + '">' +
+        '<input type="hidden" id="commentGuid" name="commentGuid" value="' + commentGuid + '">' +
+        '<button type="submit" class="btn btn-primary">Submit</button>' +
+        '</form>' +
+        '</div>' +
+        '</div>' +
+        '</div>'
 
-    return $($.parseHTML(formAsString));
+    return $($.parseHTML(htmlString));
 
 }
 function CreateLink(classString, dataToggle, href, ariaExpanded, ariaControls) {
