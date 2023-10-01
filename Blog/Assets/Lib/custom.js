@@ -149,7 +149,7 @@ $(".form").submit(function (e) {
     });
 
 });
-//On link click handler, bind to doucment and selector to catch for dynamically generated links
+//On link click handler, bind to document and selector to catch for dynamically generated links
 $(document).on("click", 'a', function () {
 
     console.log("test");
